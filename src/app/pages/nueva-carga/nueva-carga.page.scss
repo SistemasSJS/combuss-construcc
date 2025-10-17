@@ -1,0 +1,53 @@
+/* nueva-carga.page.scss */
+/* zona de imágenes con scroll para no empujar el botón */
+.img-box {
+  max-height: 32vh;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+ion-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* asegúrate de que el content pueda scrollear */
+ion-content { --overflow: auto; }
+
+/* botón pegajoso al fondo del content */
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  padding-top: 12px;
+  padding-bottom: env(safe-area-inset-bottom); /* iOS notch */
+  background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0)); /* opcional, mejora visibilidad */
+  z-index: 10;
+}
+
+/* por si en algún lado quedó sin padding inferior */
+ion-content::part(scroll) {
+  padding-bottom: 12px;
+}
+
+.oculto{
+  display: none !important;
+}
+
+.scanner-box {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+zxing-scanner, zxing-scanner video {
+  width: 100%;
+  max-height: 70vh;
+  display: block;
+  background: #000;      /* evita parpadeos */
+  border-radius: 12px;
+}
+.scanner-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.hint { display:block; text-align:center; margin: 8px 0 16px; }

@@ -1,0 +1,19 @@
+.header-row {
+  background-color: #3b3a3a;
+  border-bottom: 1px solid #ccc;
+  font-size: 14px;
+  color: white;
+}
+ion-row {
+  border-bottom: 1px solid #e0e0e0;
+  //font-size: 13px;
+}
+
+ion-item {
+  --inner-padding-end: 0;
+}
+
+
+ion-fab-button {
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

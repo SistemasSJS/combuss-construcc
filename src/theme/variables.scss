@@ -1,0 +1,30 @@
+/* Tema claro */
+:root {
+  --ion-background-color: #ffffff;
+  --ion-text-color: #000000;
+  --ion-color-primary: #3880ff;
+  --input-background: #f1f1f1;
+  --input-text: #000;
+}
+
+/* Tema oscuro */
+body.dark-theme {
+  --ion-background-color: #121212;
+  --ion-text-color: #ffffff;
+  --ion-color-primary: #3880ff;
+  --input-background: #1e1e1e;
+  --input-text: #fff;
+}
+body {
+  // Por defecto, inicia en modo oscuro
+  &.dark-theme,
+  &:not(.light-theme) {
+    --ion-background-color: #121212;
+    --ion-text-color: #ffffff;
+    --input-background: #1e1e1e;
+    --input-text: #ffffff;
+    // Agrega tus otras variables si lo necesitas
+  }
+}
+// For information on how to create your own theme, please see:
+// http://ionicframework.com/docs/theming/

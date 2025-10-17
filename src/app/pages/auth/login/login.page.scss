@@ -1,0 +1,22 @@
+.form-wrapper {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+ion-content {
+  background-color: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+ion-item {
+  --background: var(--input-background);
+  --color: var(--input-text);
+}
+
+ion-label,
+ion-input,
+ion-button {
+  color: var(--input-text);
+}
+
+

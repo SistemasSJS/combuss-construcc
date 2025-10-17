@@ -1,0 +1,62 @@
+<!-- src/app/pages/cargas/cargas.page.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Cargas</ion-title>
+    <ion-buttons slot="end">
+      <!-- Botón para abrir selector mes/año -->
+      <ion-button id="pick-month">Mes</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Calendario en popover solo mes/año -->
+  <ion-popover trigger="pick-month" showBackdrop="true">
+  <ng-template>
+    <ion-datetime
+      presentation="month-year"
+      [value]="selectedMonth.slice(0,4) + '-' + selectedMonth.slice(4,6)" 
+      (ionChange)="onMonthChange($event)">
+    </ion-datetime>
+  </ng-template>
+</ion-popover>
+
+  <ion-item lines="none">
+    <ion-label>Mostrando: {{selectedMonth}}</ion-label>
+  </ion-item>
+
+  <ion-list *ngIf="!loading && items.length">
+    <ion-item *ngFor="let c of items">
+      <ion-label>
+        <h2>{{c.serie}}-{{c.folio}} • {{c.fecha}} • {{c.desc_equipo}}</h2>
+        <p>Equipo: {{c.id_equipo}} • Litros: {{c.litros}}</p>
+        <p *ngIf="c.foto_ticket"><a [href]="c.foto_ticket" target="_blank">Ticket</a></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-list *ngIf="loading">
+    <ion-item *ngFor="let i of [1,2,3,4,5]">
+      <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+    </ion-item>
+  </ion-list>
+
+  <ion-item *ngIf="!loading && !items.length">
+    <ion-label>No hay cargas en {{selectedMonth}}</ion-label>
+  </ion-item>
+
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)" threshold="100px">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <!-- FAB Nueva -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="abrirNueva()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

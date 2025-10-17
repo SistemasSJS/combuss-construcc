@@ -1,0 +1,200 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ equipo ? 'Editar Equipo' : 'Nuevo Equipo' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancelar()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <!-- Identificación -->
+    <ion-item>
+      <ion-label position="stacked">Número Economico *</ion-label>
+      <ion-input formControlName="numeco" autocomplete="off"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="form.get('numeco')?.invalid && form.get('numeco')?.touched">
+      Requerido
+    </ion-note>
+
+    <ion-item>
+      <ion-label position="stacked">Nombre *</ion-label>
+      <ion-input formControlName="nombre" autocomplete="off"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="form.get('nombre')?.invalid && form.get('nombre')?.touched">
+      Requerido
+    </ion-note>
+
+    <ion-item>
+      <ion-label position="stacked">Tipo *</ion-label>
+      <ion-select formControlName="tipo" interface="popover" placeholder="Selecciona tipo" [compareWith]="compareById">
+        <ion-select-option *ngFor="let t of tipos" [value]="t.id">
+          {{ t.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-note color="medium" *ngIf="!tipos">Sugerencia: si no tienes catálogo, usa un input numérico.</ion-note>
+    <ion-item>
+      <ion-label position="stacked">Estado</ion-label>
+      <ion-select formControlName="estado" interface="popover" placeholder="Selecciona estado">
+        <ion-select-option *ngFor="let e of estados" [value]="e">{{ e }}</ion-select-option>
+        <!-- Opcional: valores por defecto si no tienes catálogo -->
+        <ion-select-option *ngIf="!estados" value="ACTIVO">ACTIVO</ion-select-option>
+        <ion-select-option *ngIf="!estados" value="INACTIVO">INACTIVO</ion-select-option>
+        <ion-select-option *ngIf="!estados" value="TALLER">TALLER</ion-select-option>
+        <ion-select-option *ngIf="!estados" value="BAJA">BAJA</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-accordion-group>
+      <ion-accordion value="opcionales">
+        <ion-item slot="header">
+          <ion-label>Opcionales</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <!-- pega aquí todos los campos opcionales -->
+          <!-- Unidad de Rendimiento -->
+          <ion-item>
+            <ion-label position="stacked">Unidad de Rendimiento</ion-label>
+            <ion-select formControlName="unidad_rend" interface="popover" placeholder="Selecciona una unidad"
+              [compareWith]="compareById">
+              <ion-select-option *ngFor="let u of unidades" [value]="u.id">
+                {{ u.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Placas *</ion-label>
+            <ion-input formControlName="placas" autocomplete="off"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Vigencia Placas</ion-label>
+            <ion-input type="date" formControlName="vigenciaplacas"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Póliza</ion-label>
+            <ion-input formControlName="poliza" autocomplete="off"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Vigencia Póliza</ion-label>
+            <ion-input type="date" formControlName="vigenciapoliza"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">No. Serie</ion-label>
+            <ion-input formControlName="noserie" autocomplete="off"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Peso</ion-label>
+            <ion-input formControlName="peso" autocomplete="off"></ion-input>
+          </ion-item>
+
+          <!-- Combustible -->
+          <ion-item>
+            <ion-label position="stacked">Combustible</ion-label>
+            <ion-select formControlName="combustible" interface="popover" placeholder="Selecciona combustible"
+              [compareWith]="compareById">
+              <ion-select-option *ngFor="let c of combustibles" [value]="c.id">
+                {{ c.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-note color="medium" *ngIf="!combustibles">Sugerencia: usa un catálogo (Diésel, Gasolina,
+            etc.).</ion-note>
+          <!--Rango Inferior-->
+          <ion-item>
+            <ion-label position="stacked">Rango Inferior de Rendimiento</ion-label>
+            <ion-input type="number" inputmode="decimal" min="0" formControlName="rango_inferior"></ion-input>
+          </ion-item>
+
+          <!--Rango Superior-->
+          <ion-item>
+            <ion-label position="stacked">Rango Superior de Rendimiento</ion-label>
+            <ion-input type="number" inputmode="decimal" min="0" formControlName="rango_superior"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Responsable</ion-label>
+            <ion-input formControlName="responsable" autocomplete="off"></ion-input>
+          </ion-item>
+          
+          <!--
+          <ion-item>
+            <ion-label position="stacked">Operador</ion-label>
+            <ion-input formControlName="operador" autocomplete="off"></ion-input>
+          </ion-item>
+          -->
+          <!-- Operadores -->
+          <ion-item>
+            <ion-label position="stacked">Operadores</ion-label>
+            <ion-select formControlName="id_operador" interface="popover" placeholder="Selecciona una unidad"
+              [compareWith]="compareById">
+              <ion-select-option *ngFor="let o of operadores" [value]="o.id">
+                {{ o.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+
+
+
+          <ion-item>
+            <ion-label>Foto</ion-label>
+            <input type="file" (change)="subirFoto($event)" accept="image/*" />
+          </ion-item>
+
+          <!--<img *ngIf="previewUrl" [src]="previewUrl" class="imagen-preview" />-->
+          <div *ngIf="previewUrl" class="imagen-preview-container">
+            <img [src]="previewUrl" class="imagen-preview" />
+            <ion-button color="danger" size="small" (click)="eliminarImagen()" expand="block">
+              Eliminar imagen
+            </ion-button>
+          </div>
+
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+
+
+
+    <ion-button expand="block" class="ion-margin-top" type="submit" [disabled]="form.invalid">
+      {{ equipo ? 'Actualizar' : 'Guardar' }}
+    </ion-button>
+    <ion-note *ngIf="cargando">Cargando catálogos...</ion-note>
+    <ion-note color="danger" *ngIf="errorCarga">{{ errorCarga }}</ion-note>
+  </form>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>QR del equipo</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      
+      <div class="qr-wrapper" #qrHost>
+        <qrcode [qrdata]="qrData" [width]="280" [margin]="2" [elementType]="'canvas'" [errorCorrectionLevel]="'H'"
+          [colorDark]="'#000000'" [colorLight]="'#ffffff'">
+        </qrcode>
+
+        <!-- LOGO centrado visualmente--> 
+        <img src="logo.png" alt="logo" class="qr-logo" />
+      </div>
+      
+      <ion-button expand="block" (click)="generarQR()">
+        Generar QR Code
+      </ion-button>
+      
+      <ion-button expand="block" (click)="descargarQR()">
+        Descargar PNG (QR + logo)
+      </ion-button>
+      <!--
+      <ion-button expand="block" color="primary" (click)="imprimirQR()">
+          Imprimir QR (Zebra)
+        </ion-button>-->
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,32 @@
+.imagen-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  margin-top: 1rem;
+  border-radius: 10px;
+}
+
+/* nueva-carga.page.scss */
+.qr-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.qr-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* tamaño del logo: ~22–25% del QR es buen punto de partida */
+  width: 30%;
+  height: 30%;
+  object-fit: contain;
+  background-image: url('https://combus.construcc.mx/logo.png');
+  /* marco blanco para no “romper” el QR */
+  background: #fff;
+  padding: 6px;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.05);
+}
+
+

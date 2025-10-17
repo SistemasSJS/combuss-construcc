@@ -1,0 +1,158 @@
+<!-- src/app/pages/nueva-carga/nueva-carga.page.html -->
+<ion-header>
+  <ion-toolbar>
+
+    <ion-title>Nueva carga</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<!-- El contenido scrollea -->
+<ion-content class="ion-padding">
+  <form [formGroup]="form">
+    <ion-item>
+      <ion-label position="stacked">Serie</ion-label>
+      <ion-input formControlName="serie" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Folio</ion-label>
+      <ion-input type="number" formControlName="folio" readonly></ion-input>
+    </ion-item>
+
+    <!-- ...otros campos...
+    <ion-button expand="block" (click)="scanQR()">
+      Escanear QR
+    </ion-button>-->
+    <ion-button expand="block" type="button" (click)="openScanner()">Escanear QR</ion-button>
+
+    <ion-modal [isOpen]="scannerOpen" (didDismiss)="closeScanner()">
+      <ng-template>
+        <ion-header translucent="true">
+          <ion-toolbar>
+            <ion-title>Escanea el QR</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeScanner()">Cerrar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+
+        <ion-content>
+          <div class="scanner-box">
+            <zxing-scanner [device]="currentDevice" [tryHarder]="true" [torch]="torchOn"
+              (camerasFound)="onCameras($event)" (scanSuccess)="onScanSuccess($event)"
+              (permissionResponse)="onPerm($event)">
+            </zxing-scanner>
+
+            <div class="scanner-actions">
+              <ion-button size="small" (click)="switchCam()" [disabled]="devices.length < 2">Cambiar cámara</ion-button>
+              <ion-button size="small" (click)="toggleTorch()" [disabled]="!torchAvailable">Linterna</ion-button>
+            </div>
+          </div>
+          <ion-text color="medium" class="hint">Apunta al código. Requiere HTTPS o localhost.</ion-text>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+    <ion-item>
+      <ion-label position="stacked">Número económico</ion-label>
+      <ion-input formControlName="numeco" (ionBlur)="buscarEquipoPorNumero()" (keyup.enter)="buscarEquipoPorNumero()">
+      </ion-input>
+    </ion-item>
+
+    <!-- Derivados (solo lectura) -->
+    <ion-item>
+      <ion-label position="stacked">Id Equipo</ion-label>
+      <ion-input formControlName="id_equipo" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Nombre Equipo</ion-label>
+      <ion-input formControlName="desc_equipo" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Combustible (ID)</ion-label>
+      <ion-input formControlName="id_combustible" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Num Serie</ion-label>
+      <ion-input formControlName="noserie" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Peso</ion-label>
+      <ion-input formControlName="peso" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Litros</ion-label>
+      <ion-input type="number" formControlName="litros"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Medidor Actual</ion-label>
+      <ion-input type="number" formControlName="horometro"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Obra</ion-label>
+      <ion-select formControlName="id_obra" interface="popover" placeholder="Selecciona Obra" [compareWith]="compareById">
+        <ion-select-option *ngFor="let o of obras" [value]="o.id">
+          {{ o.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item [style.display]="'none'">
+      <ion-label>Lat/Lon</ion-label>
+      <ion-note slot="end">{{ form.value.latitud }} , {{ form.value.longitud }}</ion-note>
+    </ion-item>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button expand="block" type="button" (click)="tomarFoto('ticket')" [disabled]="cargandoTicket">
+            <ion-spinner *ngIf="cargandoTicket" name="crescent"></ion-spinner>
+            <span *ngIf="!cargandoTicket">Foto ticket</span>
+          </ion-button>
+
+          <div class="img-box">
+            <ion-img *ngIf="previewTicket" [src]="previewTicket"></ion-img>
+          </div>
+          <!-- Debug/confirmación 
+          <ion-text color="success" *ngIf="form.get('foto_ticket')?.value">
+            Guardada: {{ form.get('foto_ticket')?.value }}
+          </ion-text>-->
+        </ion-col>
+
+        <ion-col size="6">
+          <ion-button expand="block" type="button" (click)="tomarFoto('horometro')" [disabled]="cargandoHoro">
+            <ion-spinner *ngIf="cargandoHoro" name="crescent"></ion-spinner>
+            <span *ngIf="!cargandoHoro">Foto Medidor</span>
+          </ion-button>
+
+          <div class="img-box">
+            <ion-img *ngIf="previewHoro" [src]="previewHoro"></ion-img>
+          </div>
+          <!-- Debug/confirmación
+          <ion-text color="success" *ngIf="form.get('foto_horometro')?.value">
+            Guardada: {{ form.get('foto_horometro')?.value }}
+          </ion-text>-->
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        
+      </ion-row>
+    </ion-grid>
+
+
+
+    <!-- Botón sticky -->
+    <div class="sticky-actions" (click)="enviar()">
+      <ion-button expand="block" [disabled]="cargando">Guardar</ion-button>
+    </div>
+  </form>
+</ion-content>

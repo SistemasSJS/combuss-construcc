@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Equipos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Versión tipo tabla (solo en pantallas grandes) -->
+  <ion-grid class="ion-hide-md-down">
+    <ion-row class="header-row">
+      <ion-col size="1"><strong>NumEco</strong></ion-col>
+      <ion-col size="3"><strong>Nombre</strong></ion-col>
+      <ion-col size="2"><strong>Placas</strong></ion-col>
+      <ion-col size="2"><strong>NoSerie</strong></ion-col>
+      <ion-col size="2"><strong>Responsable</strong></ion-col>
+      <ion-col size="1">Acciones</ion-col> <!-- Para acciones -->
+    </ion-row>
+
+    <ion-row *ngFor="let eq of equipos">
+      <ion-col size="1">{{ eq.numeco }}</ion-col>
+      <ion-col size="3">{{ eq.nombre }}</ion-col>
+      <ion-col size="2">{{ eq.placas }}</ion-col>
+      <ion-col size="2">{{ eq.numero_serie }}</ion-col>
+      <ion-col size="2">{{ eq.responsable }}</ion-col>
+      <ion-col size="1" style="display: flex;">
+        <ion-button size="small" fill="clear" color="primary" (click)="abrirModal(eq)">✏️</ion-button>
+        <ion-button size="small" fill="clear" color="danger" (click)="eliminar(eq.id)">🗑️</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Versión tipo tarjeta (visible en móviles) -->
+  <ion-list class="ion-hide-md-up">
+    <ion-item *ngFor="let eq of equipos">
+      <ion-label>
+        <ion-thumbnail slot="start" *ngIf="eq.foto?.startsWith('/storage')">
+          <img [src]="imagenBaseUrl + eq.foto" />
+        </ion-thumbnail>
+        <h2><strong>{{ eq.nombre }}</strong> ({{ eq.numeco }})</h2>
+        <p><strong>Placas:</strong> {{ eq.placas }}</p>
+        <p><strong>No. Serie:</strong> {{ eq.numero_serie }}</p>
+        <p><strong>Responsable:</strong> {{ eq.responsable }}</p>
+        <ion-buttons>
+          <ion-button size="small" fill="clear" color="primary" (click)="abrirModal(eq)">✏️</ion-button>
+          <ion-button size="small" fill="clear" color="danger" (click)="eliminar(eq.id)">🗑️</ion-button>
+        </ion-buttons>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="primary" (click)="abrirModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

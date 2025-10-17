@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Ionic App</title>
+
+  <base href="/" />
+
+  <meta name="color-scheme" content="light dark" />
+  <meta name="viewport"
+    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+
+  <!-- add to homescreen for ios -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <!-- Librería oficial-->
+  <script src="https://cdn.jsdelivr.net/npm/zebra-browser-print-js@latest/dist/index.umd.js"></script>
+  
+  <script>
+(function loadBrowserPrint() {
+  function inject(src, ok, fail) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = ok;
+    s.onerror = fail;
+    document.head.appendChild(s);
+  }
+  inject('https://127.0.0.1:9101/BrowserPrint.js',
+    function(){ console.log('BrowserPrint por HTTPS'); },
+    function(){ inject('http://127.0.0.1:9100/BrowserPrint.js',
+      function(){ console.log('BrowserPrint por HTTP'); },
+      function(){ console.warn('No se pudo cargar BrowserPrint.js'); }
+    ); }
+  );
+})();
+</script>
+
+
+
+
+
+
+
+</head>
+
+<body>
+  <app-root></app-root>
+</body>
+
+</html>
