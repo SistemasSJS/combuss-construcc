@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      FTP_SERVER: construcc.com.mx
-      FTP_USERNAME: deploy@combus.construcc.mx
-      FTP_PASSWORD: Qn$3%NW4d=b
-      FTP_PORT: 21
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+      FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      FTP_PORT: ${{ secrets.FTP_PORT }}
 
     steps:
       - name: 🧾 Checkout del código
