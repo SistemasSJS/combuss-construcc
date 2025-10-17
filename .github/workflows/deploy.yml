@@ -20,7 +20,7 @@ jobs:
       - name: 🧾 Checkout del código
         uses: actions/checkout@v4
 
-      - name: ⚙️ Configurar Node.js 18.19.1
+      - name: ⚙️ Configurar Node.js v22.17
         uses: actions/setup-node@v4
         with:
           node-version: "18.19.1"
