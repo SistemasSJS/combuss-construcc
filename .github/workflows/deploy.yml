@@ -23,7 +23,7 @@ jobs:
       - name: ⚙️ Configurar Node.js v22.17
         uses: actions/setup-node@v4
         with:
-          node-version: "18.19.1"
+          node-version: "22.17"
 
       - name: 📦 Instalar dependencias
         run: npm ci
