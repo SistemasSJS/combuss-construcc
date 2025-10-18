@@ -38,6 +38,7 @@ jobs:
           username: ${{ env.FTP_USERNAME }}
           password: ${{ env.FTP_PASSWORD }}
           port: ${{ env.FTP_PORT }}
+          protocol: ftp
           local-dir: ./www/
           server-dir: /
           exclude: |
