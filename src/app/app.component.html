@@ -1,8 +1,7 @@
 <ion-app>
-  <!-- 'when="lg"' = en móvil se oculta (overlay), en desktop se muestra fijo -->
-  <ion-split-pane contentId="main-content" when="lg">
+  <!-- Solo un router-outlet -->
+  <ion-split-pane contentId="main-content" when="lg" *ngIf="!isAuthRoute">
     <ion-menu contentId="main-content" type="overlay">
-      <!-- (opcional pero recomendado) un header en el menú -->
       <ion-header translucent="true">
         <ion-toolbar>
           <ion-title>Menú</ion-title>
@@ -28,22 +27,18 @@
               </ion-item>
             </ion-menu-toggle>
           }
-        </ion-list>
-
-        <ion-list id="labels-list">
-          <ion-list-header></ion-list-header>
-          @for (label of labels; track label) {
-            <ion-item lines="none">
-              <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
-          }
+          <!-- 🔹 Botón de logout -->
+          <ion-item button (click)="logout()" lines="none">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Cerrar sesión</ion-label>
+          </ion-item>
         </ion-list>
       </ion-content>
     </ion-menu>
 
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
-   <!-- En rutas de auth, solo el outlet (sin split pane) -->
+
+  <!-- En login, solo el outlet -->
   <ion-router-outlet *ngIf="isAuthRoute" id="main-content"></ion-router-outlet>
 </ion-app>

@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 
-
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -15,34 +13,20 @@ export class LoginPage {
   password = '';
   error = '';
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   doLogin() {
-  this.error = '';
+    this.error = '';
 
-  this.authService.login({ email: this.email, password: this.password }).subscribe({
-    next: (response: any) => {
-      const token = response.token;
-
-      if (token) {
-        localStorage.setItem('token', token);
+    this.authService.login({ email: this.email, password: this.password }).subscribe({
+      next: () => {
         alert('Login exitoso ✅');
-        // Aquí podrías navegar a otra página, por ejemplo:
-         this.router.navigate(['/equipos']);
-      } else {
-        this.error = 'No se recibió token';
+        this.router.navigate(['/equipos'], { replaceUrl: true });
+      },
+      error: err => {
+        console.error(err);
+        this.error = 'Credenciales incorrectas';
       }
-    },
-    error: err => {
-      console.error(err);
-      this.error = 'Credenciales incorrectas';
-    }
-  });
-
-  
-}
-
+    });
+  }
 }
