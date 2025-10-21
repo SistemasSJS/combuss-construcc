@@ -1,0 +1,47 @@
+name: Deploy Ionic Angular App to GoDaddy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+      FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      FTP_PORT: ${{ secrets.FTP_PORT }}
+
+    steps:
+      - name: 🧾 Checkout del código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js v22.17
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.17"
+
+      - name: 📦 Instalar dependencias
+        run: npm ci
+
+      - name: 🏗️ Construir aplicación Ionic Angular (producción)
+        run: npm run build:prod
+
+      - name: 🚀 Desplegar en GoDaddy (FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ env.FTP_SERVER }}
+          username: ${{ env.FTP_USERNAME }}
+          password: ${{ env.FTP_PASSWORD }}
+          port: ${{ env.FTP_PORT }}
+          protocol: ftp
+          local-dir: ./www/
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/node_modules/**
+            **/.github/**
