@@ -24,7 +24,7 @@
       <ion-col size="1">{{ eq.numeco }}</ion-col>
       <ion-col size="3">{{ eq.nombre }}</ion-col>
       <ion-col size="2">{{ eq.placas }}</ion-col>
-      <ion-col size="2">{{ eq.numero_serie }}</ion-col>
+      <ion-col size="2">{{ eq.noserie }}</ion-col>
       <ion-col size="2">{{ eq.responsable }}</ion-col>
       <ion-col size="1" style="display: flex;">
         <ion-button size="small" fill="clear" color="primary" (click)="abrirModal(eq)">✏️</ion-button>
@@ -42,7 +42,7 @@
         </ion-thumbnail>
         <h2><strong>{{ eq.nombre }}</strong> ({{ eq.numeco }})</h2>
         <p><strong>Placas:</strong> {{ eq.placas }}</p>
-        <p><strong>No. Serie:</strong> {{ eq.numero_serie }}</p>
+        <p><strong>No. Serie:</strong> {{ eq.noserie }}</p>
         <p><strong>Responsable:</strong> {{ eq.responsable }}</p>
         <ion-buttons>
           <ion-button size="small" fill="clear" color="primary" (click)="abrirModal(eq)">✏️</ion-button>

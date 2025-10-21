@@ -11,8 +11,8 @@
 
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>Inbox</ion-list-header>
-          <ion-note>hi&#64;ionicframework.com</ion-note>
+          <ion-list-header>Control de combustibles</ion-list-header>
+          <ion-note>y mantenimientos</ion-note>
 
           @for (p of appPages; track p; let i = $index) {
             <ion-menu-toggle auto-hide="false">
@@ -44,4 +44,6 @@
 
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
+   <!-- En rutas de auth, solo el outlet (sin split pane) -->
+  <ion-router-outlet *ngIf="isAuthRoute" id="main-content"></ion-router-outlet>
 </ion-app>
