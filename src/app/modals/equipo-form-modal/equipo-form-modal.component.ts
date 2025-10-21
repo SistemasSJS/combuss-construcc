@@ -206,8 +206,7 @@ export class EquipoFormModalComponent implements OnInit {
     const qrCanvas: HTMLCanvasElement | null = host.querySelector('canvas');
     if (!qrCanvas) return;
 
-    //const size = qrCanvas.width; // cuadrado
-    const size = 600; // cuadrado
+    const size = qrCanvas.width; // cuadrado
     const out = document.createElement('canvas');
     out.width = size;
     out.height = size;
