@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
+import imageCompression from 'browser-image-compression';
 
 import {
   Camera,
@@ -295,6 +296,24 @@ export class NuevaCargaPage implements OnInit {
     this.closeScanner();
   }
 
+  async compressImage(file: File): Promise<File> {
+    const options = {
+      maxSizeMB: 0.5, // por ejemplo, 0.5 MB
+      maxWidthOrHeight: 1024, // redimensiona si es muy grande
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+      console.log(`Tamaño original: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+      console.log(`Tamaño comprimido: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+      return compressedFile;
+    } catch (error) {
+      console.error('Error al comprimir la imagen:', error);
+      return file;
+    }
+  }
+
   async tomarFoto(tipo: 'ticket' | 'horometro') {
     try {
       const img = await Camera.getPhoto({
@@ -315,17 +334,18 @@ export class NuevaCargaPage implements OnInit {
         img,
         `foto_${tipo}_${Date.now()}.jpg`
       );
+      const compressedFile = await this.compressImage(file);
       
       // 2) Preview inmediato
-      const objectUrl = URL.createObjectURL(file);
+      const objectUrl = URL.createObjectURL(compressedFile);
       if (tipo === 'ticket') {
         this.revokeIfBlob(this.previewTicket);
         this.previewTicket = objectUrl;
-        this.subirYGuardar('ticket', file);
+        this.subirYGuardar('ticket', compressedFile);
       } else {
         this.revokeIfBlob(this.previewHoro);
         this.previewHoro = objectUrl;
-        this.subirYGuardar('horometro', file);
+        this.subirYGuardar('horometro', compressedFile);
       }
     } catch (e) {
       console.error('tomarFoto error:', e);
