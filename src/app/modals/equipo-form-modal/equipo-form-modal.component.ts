@@ -19,6 +19,8 @@ import {
   Operador,
   Unidad,
 } from 'src/app/services/catalogo.service';
+import { jsPDF } from 'jspdf';
+
 
 @Component({
   selector: 'app-equipo-form-modal',
