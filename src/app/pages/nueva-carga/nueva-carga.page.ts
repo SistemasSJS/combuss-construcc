@@ -315,11 +315,11 @@ export class NuevaCargaPage implements OnInit {
         img,
         `foto_${tipo}_${Date.now()}.jpg`
       );
-
+      /*
       if (file.size > 2 * 1024 * 1024) {
         return alert('El archivo no puede superar los 2MB');
       }
-
+      */
       // 2) Preview inmediato
       const objectUrl = URL.createObjectURL(file);
       if (tipo === 'ticket') {
