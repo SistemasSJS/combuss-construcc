@@ -21,9 +21,6 @@ import {
   Unidad,
 } from 'src/app/services/catalogo.service';
 
-
-
-
 @Component({
   selector: 'app-equipo-form-modal',
   templateUrl: './equipo-form-modal.component.html',
@@ -42,8 +39,8 @@ export class EquipoFormModalComponent implements OnInit {
   cargando = true;
   errorCarga = '';
   previewUrl: string | null = null;
-  qrData = ''; 
-  clave  = '';
+  qrData = '';
+  clave = '';
   imagenBaseUrl = 'https://apicons.ddns.net:8093'; // sin `/api`
   //imagenBaseUrl = 'http://appconstruc.test'; // sin `/api`
   //imagenBaseUrl = 'http://192.168.1.83:8000';
@@ -91,7 +88,6 @@ export class EquipoFormModalComponent implements OnInit {
       this.form.patchValue(this.equipo);
 
       this.generarQR();
-      
 
       // Si el equipo tiene una imagen previa, úsala como previsualización
       if (this.equipo.foto) {
@@ -204,9 +200,8 @@ export class EquipoFormModalComponent implements OnInit {
       idcombustible: values.combustible,
     });
     this.clave = 'NumEco ' + values.numeco;
-    
   }
-  
+
   descargarQR() {
     const host = this.qrHost?.nativeElement;
     if (!host) return;
@@ -230,7 +225,7 @@ export class EquipoFormModalComponent implements OnInit {
 
     logo.src = 'assets/img/logo.png';
     logo.onload = () => {
-      const logoRatio = 0.30; // 22% del ancho del QR
+      const logoRatio = 0.3; // 22% del ancho del QR
       const logoSize = Math.floor(size * logoRatio);
 
       // fondo blanco redondeado detrás del logo para no “ensuciar” el QR
@@ -261,110 +256,158 @@ export class EquipoFormModalComponent implements OnInit {
   }
 
   async descargarPDF() {
-    // Medidas de la etiqueta en mm
+    // === Medidas del PDF (mm) ===
     const pageW = 76;
     const pageH = 50;
 
-    // Layout internos en mm
+    // === Layout interno (mm) ===
     const margin = 3;
-    const qrSize = 35;   // lado del QR dentro del PDF
-    const gap = 4;       // espacio entre QR y texto
-    const baseFont = 36; // tamaño base de la clave
+    const qrSize = 35; // lado del QR dentro del PDF
+    const gap = 4; // separación QR ↔ texto
 
-    // 1) Obtener canvas del QR
-    const qrCanvas = this.qrHost?.nativeElement.querySelector('canvas') as HTMLCanvasElement | null;
+    // 1) Obtener el canvas del QR
+    const qrCanvas = this.qrHost?.nativeElement.querySelector(
+      'canvas'
+    ) as HTMLCanvasElement | null;
     if (!qrCanvas) {
       console.error('No se encontró el canvas del QR.');
       return;
     }
 
-    // 2) Componer QR + logo sobre un canvas temporal
+    // 2) Componer QR + logo en un canvas temporal para “hornearlo” en una sola imagen
     const composedDataUrl = await this.componerQrConLogo(qrCanvas);
     if (!composedDataUrl) {
       console.error('No se pudo componer el QR con el logo.');
       return;
     }
 
-    // 3) Crear PDF 76x50 mm
+    // 3) Crear el PDF exacto 76x50 mm
     const pdf = new jsPDF({
-      orientation: 'landscape',   // 'p' | 'portrait' | 'l' | 'landscape'
-      unit: 'mm',                // 'mm' | 'pt' | 'px' | 'in' ...
-      format: [pageW, pageH],    // [ancho, alto] en la unidad elegida
-      compress: true,            // ✅ no 'compressPdf'
+      orientation: 'landscape',
+      unit: 'mm',
+      format: [pageW, pageH],
+      compress: true, // <- usar 'compress' (no 'compressPdf')
     });
 
-    // Posición del QR: alineado a la izquierda, centrado verticalmente
+    // 4) Dibujar el QR a la izquierda, centrado verticalmente
     const qrX = margin;
     const qrY = (pageH - qrSize) / 2;
     pdf.addImage(composedDataUrl, 'PNG', qrX, qrY, qrSize, qrSize);
 
-    // 4) Texto (clave) a la derecha
+    // 5) Preparar el texto en dos líneas
+    //    Si la clave viene "NumEco 03", la partimos en ["NumEco", "03"].
+    //    Si ya viene con salto de línea, lo respetamos.
+    const raw = (this.clave ?? '').trim();
+    let line1 = '',
+      line2 = '';
+    if (raw.includes('\n')) {
+      const [a, b = ''] = raw.split('\n');
+      line1 = a.trim();
+      line2 = b.trim();
+    } else {
+      const parts = raw.split(/\s+/);
+      if (parts.length >= 2) {
+        line1 = parts.slice(0, -1).join(' ');
+        line2 = parts.slice(-1)[0];
+      } else {
+        line1 = raw; // si no hay segunda parte, se imprime una sola línea
+      }
+    }
+
+    // 6) Área disponible para el texto
     const textX = qrX + qrSize + gap;
     const textMaxW = pageW - textX - margin;
 
+    // 7) Tipografías y ajuste a ancho
     pdf.setFont('helvetica', 'bold');
-    let fs = baseFont;
-    pdf.setFontSize(fs);
 
-    // Si no cabe, reducir fuente
-    while (fs > 10 && pdf.getTextWidth(this.clave) > textMaxW) {
-      fs -= 2;
+    // Tamaños base (ajústalos a tu gusto)
+    let fs1 = 20; // para la línea 1 (ej. "NumEco")
+    let fs2 = 28; // para la línea 2 (ej. "03")
+
+    const shrinkToFit = (txt: string, fsInit: number) => {
+      let fs = fsInit;
+      if (!txt) return fs;
       pdf.setFontSize(fs);
+      while (pdf.getTextWidth(txt) > textMaxW && fs > 8) {
+        fs -= 1;
+        pdf.setFontSize(fs);
+      }
+      return fs;
+    };
+
+    fs1 = shrinkToFit(line1, fs1);
+    fs2 = shrinkToFit(line2, fs2);
+
+    // 8) Calcular posición vertical para centrar el bloque de dos líneas
+    //    Aproximamos la "altura visual" de una línea como 0.7 * fontSize (en mm)
+    const lineGap = 3; // separación entre líneas en mm
+    const h1 = line1 ? fs1 * 0.7 : 0;
+    const h2 = line2 ? fs2 * 0.7 : 0;
+    const totalH = h1 + h2 + (line1 && line2 ? lineGap : 0);
+
+    const centerY = pageH / 2;
+    // Baseline 'middle': colocamos cada línea en el centro de su caja
+    const y1 = line1 ? centerY - totalH / 2 + h1 / 2 : centerY;
+    const y2 = line2 ? (line1 ? y1 + h1 / 2 + lineGap + h2 / 2 : centerY) : 0;
+
+    // 9) Pintar texto
+    if (line1) {
+      pdf.setFontSize(fs1);
+      pdf.text(line1, textX, y1, { baseline: 'middle' });
+    }
+    if (line2) {
+      pdf.setFontSize(fs2);
+      pdf.text(line2, textX, y2, { baseline: 'middle' });
     }
 
-    // Centrar verticalmente
-    const textY = pageH / 2 + fs * 0.35;
-    pdf.text(this.clave, textX, textY, { baseline: 'middle' });
-
-    // 5) Descargar
-    pdf.save(`Etiqueta-${this.clave}.pdf`);
+    // 10) Descargar
+    pdf.save(`Etiqueta-${raw.replace(/\s+/g, '_')}.pdf`);
   }
 
   /**
-   * Dibuja el canvas del QR y el logo centrado sobre un canvas temporal.
-   * Devuelve un dataURL PNG listo para addImage.
+   * Compone el QR (canvas) y el logo centrado en un canvas temporal.
+   * Devuelve dataURL PNG listo para insertar en el PDF.
+   * Nota: usa un logo dentro de /assets para evitar CORS.
    */
-  private async componerQrConLogo(qrCanvas: HTMLCanvasElement): Promise<string | null> {
-    // Buscar el <img> del logo dentro del host
-    const logoImg = this.qrHost?.nativeElement.querySelector('img.qr-logo') as HTMLImageElement | null;
+  private async componerQrConLogo(
+    qrCanvas: HTMLCanvasElement
+  ): Promise<string | null> {
+    const logoImg = this.qrHost?.nativeElement.querySelector(
+      'img.qr-logo'
+    ) as HTMLImageElement | null;
 
-    // Canvas temporal
     const tmp = document.createElement('canvas');
     tmp.width = qrCanvas.width;
     tmp.height = qrCanvas.height;
     const ctx = tmp.getContext('2d');
     if (!ctx) return null;
 
-    // Fondo blanco (por si el logo tiene transparencia)
+    // Fondo blanco
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, tmp.width, tmp.height);
 
-    // Dibujar QR original
+    // QR original
     ctx.drawImage(qrCanvas, 0, 0);
 
-    // Dibujar logo centrado (si existe)
+    // Logo centrado (si existe y está cargado)
     if (logoImg && logoImg.complete) {
-      // tamaño del logo relativo al QR (ajusta este factor a tu gusto)
       const factor = 0.22; // 22% del lado del QR
       const lw = tmp.width * factor;
       const lh = tmp.height * factor;
       const lx = (tmp.width - lw) / 2;
       const ly = (tmp.height - lh) / 2;
-
       try {
-        // Si el logo viene de otra origin, podría “taint” el canvas.
-        // Procura usar assets locales (assets/logo.png) o un dataURL.
         ctx.drawImage(logoImg, lx, ly, lw, lh);
-      } catch (_) {
-        console.warn('No se pudo dibujar el logo (posible CORS). Continuo con el QR solo.');
+      } catch {
+        console.warn(
+          'No se pudo dibujar el logo (posible CORS). Continúo solo con el QR.'
+        );
       }
     }
 
     return tmp.toDataURL('image/png');
   }
-  
-
-  
 
   // helper para rectángulos redondeados
   private roundRect(
