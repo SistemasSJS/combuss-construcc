@@ -36,6 +36,7 @@
     "angularx-qrcode": "^20.0.0",
     "browser-image-compression": "^2.0.2",
     "ionicons": "^7.0.0",
+    "jspdf": "^3.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zebra-browser-print-js": "^1.0.5",

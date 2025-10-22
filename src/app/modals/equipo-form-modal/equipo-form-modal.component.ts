@@ -6,6 +6,7 @@ import {
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
+import { jsPDF } from 'jspdf';
 import { ModalController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Equipo } from 'src/app/models/equipo.models';
@@ -19,6 +20,9 @@ import {
   Operador,
   Unidad,
 } from 'src/app/services/catalogo.service';
+
+
+
 
 @Component({
   selector: 'app-equipo-form-modal',
@@ -39,6 +43,7 @@ export class EquipoFormModalComponent implements OnInit {
   errorCarga = '';
   previewUrl: string | null = null;
   qrData = ''; 
+  clave  = '';
   imagenBaseUrl = 'https://apicons.ddns.net:8093'; // sin `/api`
   //imagenBaseUrl = 'http://appconstruc.test'; // sin `/api`
   //imagenBaseUrl = 'http://192.168.1.83:8000';
@@ -86,6 +91,7 @@ export class EquipoFormModalComponent implements OnInit {
       this.form.patchValue(this.equipo);
 
       this.generarQR();
+      
 
       // Si el equipo tiene una imagen previa, úsala como previsualización
       if (this.equipo.foto) {
@@ -197,6 +203,8 @@ export class EquipoFormModalComponent implements OnInit {
       descripcion: values.nombre,
       idcombustible: values.combustible,
     });
+    this.clave = 'NumEco ' + values.numeco;
+    
   }
   
   descargarQR() {
@@ -250,6 +258,109 @@ export class EquipoFormModalComponent implements OnInit {
       a.href = out.toDataURL('image/png');
       a.click();
     };
+  }
+
+  async descargarPDF() {
+    // Medidas de la etiqueta en mm
+    const pageW = 76;
+    const pageH = 50;
+
+    // Layout internos en mm
+    const margin = 3;
+    const qrSize = 35;   // lado del QR dentro del PDF
+    const gap = 4;       // espacio entre QR y texto
+    const baseFont = 36; // tamaño base de la clave
+
+    // 1) Obtener canvas del QR
+    const qrCanvas = this.qrHost?.nativeElement.querySelector('canvas') as HTMLCanvasElement | null;
+    if (!qrCanvas) {
+      console.error('No se encontró el canvas del QR.');
+      return;
+    }
+
+    // 2) Componer QR + logo sobre un canvas temporal
+    const composedDataUrl = await this.componerQrConLogo(qrCanvas);
+    if (!composedDataUrl) {
+      console.error('No se pudo componer el QR con el logo.');
+      return;
+    }
+
+    // 3) Crear PDF 76x50 mm
+    const pdf = new jsPDF({
+      orientation: 'landscape',   // 'p' | 'portrait' | 'l' | 'landscape'
+      unit: 'mm',                // 'mm' | 'pt' | 'px' | 'in' ...
+      format: [pageW, pageH],    // [ancho, alto] en la unidad elegida
+      compress: true,            // ✅ no 'compressPdf'
+    });
+
+    // Posición del QR: alineado a la izquierda, centrado verticalmente
+    const qrX = margin;
+    const qrY = (pageH - qrSize) / 2;
+    pdf.addImage(composedDataUrl, 'PNG', qrX, qrY, qrSize, qrSize);
+
+    // 4) Texto (clave) a la derecha
+    const textX = qrX + qrSize + gap;
+    const textMaxW = pageW - textX - margin;
+
+    pdf.setFont('helvetica', 'bold');
+    let fs = baseFont;
+    pdf.setFontSize(fs);
+
+    // Si no cabe, reducir fuente
+    while (fs > 10 && pdf.getTextWidth(this.clave) > textMaxW) {
+      fs -= 2;
+      pdf.setFontSize(fs);
+    }
+
+    // Centrar verticalmente
+    const textY = pageH / 2 + fs * 0.35;
+    pdf.text(this.clave, textX, textY, { baseline: 'middle' });
+
+    // 5) Descargar
+    pdf.save(`Etiqueta-${this.clave}.pdf`);
+  }
+
+  /**
+   * Dibuja el canvas del QR y el logo centrado sobre un canvas temporal.
+   * Devuelve un dataURL PNG listo para addImage.
+   */
+  private async componerQrConLogo(qrCanvas: HTMLCanvasElement): Promise<string | null> {
+    // Buscar el <img> del logo dentro del host
+    const logoImg = this.qrHost?.nativeElement.querySelector('img.qr-logo') as HTMLImageElement | null;
+
+    // Canvas temporal
+    const tmp = document.createElement('canvas');
+    tmp.width = qrCanvas.width;
+    tmp.height = qrCanvas.height;
+    const ctx = tmp.getContext('2d');
+    if (!ctx) return null;
+
+    // Fondo blanco (por si el logo tiene transparencia)
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, tmp.width, tmp.height);
+
+    // Dibujar QR original
+    ctx.drawImage(qrCanvas, 0, 0);
+
+    // Dibujar logo centrado (si existe)
+    if (logoImg && logoImg.complete) {
+      // tamaño del logo relativo al QR (ajusta este factor a tu gusto)
+      const factor = 0.22; // 22% del lado del QR
+      const lw = tmp.width * factor;
+      const lh = tmp.height * factor;
+      const lx = (tmp.width - lw) / 2;
+      const ly = (tmp.height - lh) / 2;
+
+      try {
+        // Si el logo viene de otra origin, podría “taint” el canvas.
+        // Procura usar assets locales (assets/logo.png) o un dataURL.
+        ctx.drawImage(logoImg, lx, ly, lw, lh);
+      } catch (_) {
+        console.warn('No se pudo dibujar el logo (posible CORS). Continuo con el QR solo.');
+      }
+    }
+
+    return tmp.toDataURL('image/png');
   }
   
 
