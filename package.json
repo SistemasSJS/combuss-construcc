@@ -8,7 +8,6 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "build:prod": "ng build --configuration=production",
     "test": "ng test",
     "lint": "ng lint"
   },
@@ -34,11 +33,8 @@
     "@ionic/pwa-elements": "^3.3.0",
     "@zxing/ngx-scanner": "^20.0.0",
     "angularx-qrcode": "^20.0.0",
-<<<<<<< HEAD
     "browser-image-compression": "^2.0.2",
-=======
     "chart.js": "^4.5.1",
->>>>>>> ramalocal
     "ionicons": "^7.0.0",
     "jspdf": "^3.0.3",
     "ng2-charts": "^8.0.0",
