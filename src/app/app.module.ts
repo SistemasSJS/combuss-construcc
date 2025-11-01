@@ -11,6 +11,8 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserPrintService } from './services/browser-print.service';
+import { provideCharts, withDefaultRegisterables, BaseChartDirective } from 'ng2-charts';
+
 
 export function initBP(bp: BrowserPrintService) {
   // Si no quieres bloquear el arranque, captura el error y resuelve igual.
@@ -21,7 +23,7 @@ export function initBP(bp: BrowserPrintService) {
   declarations: [AppComponent, /*EquipoFormModalComponent*/],
   imports: [BrowserModule, IonicModule.forRoot(),  AppRoutingModule, HttpClientModule, ReactiveFormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [BrowserPrintService,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [BrowserPrintService,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideCharts(withDefaultRegisterables())],
   bootstrap: [AppComponent],
   
 })

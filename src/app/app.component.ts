@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { MenuController } from '@ionic/angular';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { Platform } from '@ionic/angular';
 import { AuthService } from './services/auth.service';
+
 
 @Component({
   selector: 'app-root',
@@ -13,7 +15,7 @@ import { AuthService } from './services/auth.service';
 export class AppComponent {
   public appPages = [
     { title: 'Equipos', url: '/equipos', icon: 'construct' },
-    { title: 'Cargas', url: '/cargas', icon: 'construct' },
+    { title: 'Cargas', url: '/cargas', icon: 'receipt' },
   ];
   public labels = [];
 
@@ -23,7 +25,8 @@ export class AppComponent {
   constructor(
     private router: Router,
     private menu: MenuController,
-    private auth: AuthService
+    private auth: AuthService,
+    private platform: Platform
   ) {
     // Monitorea cambios de login/logout
     this.auth.isLoggedIn$().subscribe((logged) => {
@@ -49,5 +52,13 @@ export class AppComponent {
     this.auth.logout();
     this.menu.close(); // cierra el menú si estaba abierto
     this.router.navigate(['/login'], { replaceUrl: true });
+  }
+
+  get isDesktop(): boolean {
+    return this.platform.is('desktop');
+  }
+
+  get isAdmin(): boolean {
+    return this.auth.isAdmin();
   }
 }

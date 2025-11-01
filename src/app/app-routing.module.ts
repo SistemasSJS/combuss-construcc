@@ -26,6 +26,18 @@ const routes: Routes = [
   {
     path: 'nueva-carga',
     loadChildren: () => import('./pages/nueva-carga/nueva-carga.module').then( m => m.NuevaCargaPageModule)
+  },
+  {
+    path: 'users',
+    loadChildren: () => import('./pages/users/users.module').then( m => m.UsersPageModule)
+  },
+  {
+    path: 'users',
+    loadChildren: () => import('./pages/users/users.module').then(m => m.UsersPageModule)
+  },
+  {
+    path: 'rendimiento',
+    loadChildren: () => import('./pages/rendimiento/rendimiento.module').then( m => m.RendimientoPageModule)
   }
 ];
 

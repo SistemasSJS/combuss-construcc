@@ -29,9 +29,9 @@ export interface Obras {
   providedIn: 'root',
 })
 export class CatalogoService {
-  private baseUrl = 'https://apicons.ddns.net:8093/api'; // Cambia esto si tu backend tiene otra URL
+  //private baseUrl = 'https://apicons.ddns.net:8093/api'; // Cambia esto si tu backend tiene otra URL
   //private baseUrl = 'http://appconstruc.test/api'; // Cambia esto si tu backend tiene otra URL
-  //private baseUrl = 'api'; // Cambia esto si tu backend tiene otra URL
+  private baseUrl = 'api'; // Cambia esto si tu backend tiene otra URL
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

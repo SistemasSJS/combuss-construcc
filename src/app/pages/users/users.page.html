@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Usuarios</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreate()">Nuevo</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="load(); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let u of users">
+      <ion-label>
+        <h2>{{ u.name }}</h2>
+        <p>{{ u.email }} • {{ u.role || '—' }}</p>
+      </ion-label>
+      <!--
+      <ion-button slot="end" fill="clear" (click)="openEdit(u)">Editar</ion-button>
+      <ion-button slot="end" color="danger" fill="clear" (click)="remove(u)">Eliminar</ion-button>-->
+      <ion-button size="small" fill="clear" color="primary" (click)="openEdit(u)">✏️</ion-button>
+      <ion-button size="small" fill="clear" color="danger" (click)="remove(u)">🗑️</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-skeleton-text *ngIf="loading" animated style="width: 90%; height: 24px; margin: 16px;"></ion-skeleton-text>
+
+  <!-- MODAL CREAR -->
+  <ion-modal #createModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar><ion-title>Nuevo usuario</ion-title></ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form">
+          <ion-item><ion-input label="Nombre" labelPlacement="floating" formControlName="name"></ion-input></ion-item>
+          <ion-item><ion-input type="email" label="Email" labelPlacement="floating" formControlName="email"></ion-input></ion-item>
+          <ion-item><ion-input type="password" label="Password" labelPlacement="floating" formControlName="password"></ion-input></ion-item>
+          <ion-item><ion-input label="Rol" labelPlacement="floating" formControlName="role"></ion-input></ion-item>
+        </form>
+        <ion-button expand="block" [disabled]="form.invalid" (click)="saveCreate()">Guardar</ion-button>
+        <ion-button expand="block" fill="clear" (click)="createModal.dismiss()">Cerrar</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- MODAL EDITAR -->
+  <ion-modal #editModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar><ion-title>Editar usuario</ion-title></ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form">
+          <ion-item><ion-input label="Nombre" labelPlacement="floating" formControlName="name"></ion-input></ion-item>
+          <ion-item><ion-input type="email" label="Email" labelPlacement="floating" formControlName="email"></ion-input></ion-item>
+          <ion-item><ion-input type="password" label="Password (opcional)" labelPlacement="floating" formControlName="password"></ion-input></ion-item>
+          <ion-item><ion-input label="Rol" labelPlacement="floating" formControlName="role"></ion-input></ion-item>
+        </form>
+        <ion-button expand="block" [disabled]="form.invalid" (click)="saveEdit()">Actualizar</ion-button>
+        <ion-button expand="block" fill="clear" (click)="editModal.dismiss()">Cerrar</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
+
