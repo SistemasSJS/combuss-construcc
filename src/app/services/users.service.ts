@@ -14,9 +14,9 @@ export interface User {
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private http = inject(HttpClient);
-  //private baseUrl = 'https://apicons.ddns.net:8093/api'; // Cambia esto si tu backend tiene otra URL
+  private baseUrl = 'https://apicons.ddns.net:8093/api'; // Cambia esto si tu backend tiene otra URL
   //private baseUrl = 'http://appconstruc.test/api'; // Cambia esto si tu backend tiene otra URL
-  private baseUrl = '/api/users'; // Cambia esto si tu backend tiene otra URL
+  //private baseUrl = '/api/users'; // Cambia esto si tu backend tiene otra URL
   //private baseUrl = `${environment.apiUrl}/users`;
 
   list(): Observable<User[]> {
