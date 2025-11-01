@@ -6,11 +6,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ionic build",
+    "build:prod": "ionic build --configuration=production --no-interactive",
     "watch": "ng build --watch --configuration development",
-    "build:prod": "ng build --configuration=production",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "serve": "ionic serve"
   },
   "private": true,
   "dependencies": {
@@ -35,8 +36,10 @@
     "@zxing/ngx-scanner": "^20.0.0",
     "angularx-qrcode": "^20.0.0",
     "browser-image-compression": "^2.0.2",
+    "chart.js": "^4.5.1",
     "ionicons": "^7.0.0",
     "jspdf": "^3.0.3",
+    "ng2-charts": "^8.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zebra-browser-print-js": "^1.0.5",
