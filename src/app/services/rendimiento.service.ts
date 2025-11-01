@@ -31,7 +31,8 @@ export interface RendResponse {
 
 @Injectable({ providedIn: 'root' })
 export class RendimientoService {
-  private base = '/api'; // ajusta si usas proxy o ruta distinta
+  private base = 'https://apicons.ddns.net:8093/api';
+  //private base = '/api'; // ajusta si usas proxy o ruta distinta
 
   constructor(private http: HttpClient) {}
 

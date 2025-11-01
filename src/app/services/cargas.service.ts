@@ -31,9 +31,9 @@ export interface CargasResponse {
 
 @Injectable({ providedIn: 'root' })
 export class CargasService {
-  //private base = 'https://apicons.ddns.net:8093/api'; // AJUSTA
+  private base = 'https://apicons.ddns.net:8093/api'; // AJUSTA
   //private base = 'http://appconstruc.test/api';
-  private base = '/api';
+  //private base = '/api';
   
   //private base = 'http://192.168.100.6:8000/api';
 

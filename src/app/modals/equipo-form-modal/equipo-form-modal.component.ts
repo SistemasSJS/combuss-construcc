@@ -39,11 +39,11 @@ export class EquipoFormModalComponent implements OnInit {
   cargando = true;
   errorCarga = '';
   previewUrl: string | null = null;
-
-  qrData = '';
-  clave = '';
+  qrData = ''; 
+  clave  = '';
   imagenBaseUrl = 'https://apicons.ddns.net:8093'; // sin `/api`
-
+  //imagenBaseUrl = 'http://appconstruc.test'; // sin `/api`
+  //imagenBaseUrl = 'http://192.168.100.5:8000';
   estados = ['ACTIVO', 'INACTIVO', 'TALLER', 'BAJA'];
 
   obras = [

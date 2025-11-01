@@ -16,6 +16,7 @@ export class AppComponent {
   public appPages = [
     { title: 'Equipos', url: '/equipos', icon: 'construct' },
     { title: 'Cargas', url: '/cargas', icon: 'receipt' },
+    
   ];
   public labels = [];
 

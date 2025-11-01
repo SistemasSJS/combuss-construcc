@@ -19,9 +19,9 @@ export class AuthService {
   private http = inject(HttpClient);
   private zone = inject(NgZone);
 
-  //private baseUrl = 'https://apicons.ddns.net:8093/api'; // Cambia esto si tu backend tiene otra URL
+  private baseUrl = 'https://apicons.ddns.net:8093/api'; // Cambia esto si tu backend tiene otra URL
   //private baseUrl = 'http://appconstruc.test/api'; // Cambia esto si tu backend tiene otra URL
-  private baseUrl = 'api'; // Cambia esto si tu backend tiene otra URL
+  //private baseUrl = 'api'; // Cambia esto si tu backend tiene otra URL
   public loggedIn$ = new BehaviorSubject<boolean>(!!localStorage.getItem('token'));
   isLoggedIn$(): Observable<boolean> {
     return this.loggedIn$.asObservable();
