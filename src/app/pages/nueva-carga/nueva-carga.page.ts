@@ -82,9 +82,7 @@ export class NuevaCargaPage implements OnInit {
         noserie: this.fb.control<string | null>(null, {
       validators: Validators.required,
     }),
-    peso: this.fb.control<number | null>(null, {
-      validators: Validators.required,
-    }),
+    peso: this.fb.control<number | null>(null),
     horometro: [null],
     litros: [null, Validators.required],
     id_obra: this.fb.control<number | null>(null),

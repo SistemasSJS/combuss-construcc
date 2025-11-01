@@ -1,10 +1,10 @@
 <ion-app>
-  <!-- Solo un router-outlet -->
-  <ion-split-pane contentId="main-content" when="lg" *ngIf="!isAuthRoute">
-    <ion-menu contentId="main-content" type="overlay">
+  <!-- En desktop (lg+) el menú queda fijo; en móvil es overlay -->
+  <ion-split-pane contentId="main-content" when="lg">
+    <ion-menu contentId="main-content" type="overlay" side="start">
       <ion-header translucent="true">
         <ion-toolbar>
-          <ion-title>Menú</ion-title>
+          <ion-title>Motive</ion-title>
         </ion-toolbar>
       </ion-header>
 
@@ -13,7 +13,8 @@
           <ion-list-header>Motive</ion-list-header>
           <ion-note>versión 1.1</ion-note>
 
-          @for (p of appPages; track p; let i = $index) {
+          <!-- Páginas base del arreglo appPages -->
+          @for (p of appPages; track p) {
             <ion-menu-toggle auto-hide="false">
               <ion-item routerDirection="root"
                         [routerLink]="[p.url]"
@@ -27,7 +28,37 @@
               </ion-item>
             </ion-menu-toggle>
           }
-          <!-- 🔹 Botón de logout -->
+
+          <!-- Usuarios: SOLO admin y SOLO visible en desktop -->
+          <ion-menu-toggle auto-hide="false" *ngIf="isAdmin">
+            <ion-item class="ion-hide-md-down"
+                      routerDirection="root"
+                      [routerLink]="['/users']"
+                      lines="none"
+                      detail="false"
+                      routerLinkActive="selected">
+              <ion-icon aria-hidden="true" slot="start"
+                        [ios]="'people-outline'"
+                        [md]="'people-sharp'"></ion-icon>
+              <ion-label>Usuarios</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <!-- Rendimiento: SOLO admin (visible en móvil y desktop) -->
+          <ion-menu-toggle auto-hide="false" *ngIf="isAdmin">
+            <ion-item routerDirection="root"
+                      [routerLink]="['/rendimiento']"
+                      lines="none"
+                      detail="false"
+                      routerLinkActive="selected">
+              <ion-icon slot="start"
+                        [ios]="'speedometer-outline'"
+                        [md]="'speedometer-sharp'"></ion-icon>
+              <ion-label>Rendimiento</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <!-- Logout -->
           <ion-item button (click)="logout()" lines="none">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
             <ion-label>Cerrar sesión</ion-label>
@@ -36,9 +67,7 @@
       </ion-content>
     </ion-menu>
 
+    <!-- MUY IMPORTANTE: el id DEBE coincidir con contentId del menú -->
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
-
-  <!-- En login, solo el outlet -->
-  <ion-router-outlet *ngIf="isAuthRoute" id="main-content"></ion-router-outlet>
 </ion-app>

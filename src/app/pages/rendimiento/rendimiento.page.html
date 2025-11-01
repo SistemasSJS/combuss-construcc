@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Rendimiento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Selector de equipo -->
+  <ion-item>
+    <ion-label>Equipo</ion-label>
+    <ion-select placeholder="Selecciona equipo" [(ngModel)]="equipoId" (ionChange)="onEquipoChange()">
+      <ion-select-option *ngFor="let e of equipos" [value]="e.id">
+        {{ e.nombre }} ({{ e.numeco }})
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ng-container *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner> Cargando…
+  </ng-container>
+
+  <ion-item *ngIf="error">
+    <ion-label color="danger">{{ error }}</ion-label>
+  </ion-item>
+
+  <!-- Resumen + sparkline -->
+  <ion-card *ngIf="data as d">
+    <ion-card-header>
+      <ion-card-title>
+        {{ d.unidad }}
+        <ng-container *ngIf="d.rango_objetivo as ro; else sinRango">
+          | Objetivo: {{ ro.inferior }}–{{ ro.superior }}
+        </ng-container>
+      </ion-card-title>
+      <ng-template #sinRango>
+        | Objetivo: —
+      </ng-template>
+      <ion-card-subtitle>
+        Prom: {{ d.resumen?.promedio ?? '—' }}
+        · Min: {{ d.resumen?.min ?? '—' }}
+        · Max: {{ d.resumen?.max ?? '—' }}
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <!--<div class="sparkline">
+        <svg [attr.viewBox]="'0 0 ' + viewW + ' ' + viewH" preserveAspectRatio="none">
+          <path *ngIf="sparkPath" [attr.d]="sparkPath" fill="none" stroke="currentColor" stroke-width="2" />
+        </svg>
+      </div>-->
+      <div class="sparkline">
+        <svg [attr.viewBox]="'0 0 ' + viewW + ' ' + viewH" preserveAspectRatio="none">
+          <g *ngIf="spark as s">
+            <!-- Líneas de rango -->
+            <line *ngIf="s.infY !== null" x1="0" [attr.y1]="s.infY" [attr.x2]="viewW" [attr.y2]="s.infY"
+              stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4" stroke-width="1" />
+            <line *ngIf="s.supY !== null" x1="0" [attr.y1]="s.supY" [attr.x2]="viewW" [attr.y2]="s.supY"
+              stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4" stroke-width="1" />
+
+            <!-- Segmentos coloreados -->
+            <path *ngFor="let seg of s.segments" [attr.d]="seg.d" [attr.stroke]="seg.color" fill="none" stroke-width="2"
+              stroke-linecap="round" />
+
+            <!-- Puntos -->
+            <circle *ngFor="let p of s.points" [attr.cx]="p.cx" [attr.cy]="p.cy" r="2.5" [attr.fill]="p.color">
+              <title>{{ p.label }}</title>
+            </circle>
+          </g>
+        </svg>
+      </div>
+
+      <div class="kpis">
+        <ion-chip color="success" outline>
+          <ion-label>{{ d.resumen?.porcentaje_en_rango ?? 0 }}% en rango</ion-label>
+        </ion-chip>
+        <ion-chip>
+          <ion-icon [name]="tendenciaIcon(d.resumen?.tendencia)" slot="start"></ion-icon>
+          <ion-label>Tendencia</ion-label>
+        </ion-chip>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Historial de cargas -->
+  <ion-list *ngIf="data as d">
+    <ion-list-header>Historial</ion-list-header>
+    <ion-item *ngFor="let it of d.items; trackBy: trackByCargaId">
+      <ion-label>
+        <h3>{{ it.fecha_carga | date:'medium' }}</h3>
+        <p>
+          {{ it.distancia_o_horas ?? '—' }} {{ d.unidad === 'km/L' ? 'km' : 'h' }}
+          · {{ it.litros }} L
+          · <strong>{{ it.eficiencia ? (it.eficiencia | number:'1.2-2') : '—' }} {{ d.unidad }}</strong>
+        </p>
+      </ion-label>
+      <ion-badge [color]="badgeColor(it.estado)" slot="end">
+        {{ it.estado === 'en_rango' ? 'OK' : (it.estado || '—') }}
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+
+</ion-content>
