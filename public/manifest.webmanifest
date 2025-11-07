@@ -1,9 +1,11 @@
 {
-  "name": "app",
-  "short_name": "app",
+  "name": "Motive",
+  "short_name": "Motive",
+  "description": "Control de carga de combustibles y mantenimientos",
+  "start_url": "/index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "scope": "./",
-  "start_url": "./",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
