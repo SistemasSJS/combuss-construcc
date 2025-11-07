@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Operadores</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreate()">Nuevo</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="load(); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list *ngIf="!loading">
+    <ion-item *ngFor="let o of operador">
+      <ion-label>
+        <h2>{{ o.nombre }}</h2>
+        <p>{{ o.activo }} </p>
+      </ion-label>
+      <!--
+      <ion-button slot="end" fill="clear" (click)="openEdit(u)">Editar</ion-button>
+      <ion-button slot="end" color="danger" fill="clear" (click)="remove(u)">Eliminar</ion-button>-->
+      <ion-button size="small" fill="clear" color="primary" (click)="openEdit(o)">✏️</ion-button>
+      <ion-button size="small" fill="clear" color="danger" (click)="remove(o)">🗑️</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-skeleton-text *ngIf="loading" animated style="width: 90%; height: 24px; margin: 16px;"></ion-skeleton-text>
+
+  <!-- MODAL CREAR -->
+  <ion-modal #createModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar><ion-title>Nuevo usuario</ion-title></ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form">
+          <ion-item><ion-input label="Nombre" labelPlacement="floating" formControlName="nombre"></ion-input></ion-item>
+          <ion-item>
+            <ion-label position="floating">Activo</ion-label>
+            <ion-select formControlName="activo" interface="popover" placeholder="Selecciona">
+              <ion-select-option value="S">Sí</ion-select-option>
+              <ion-select-option value="N">No</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </form>
+        <ion-button expand="block" [disabled]="form.invalid" (click)="saveCreate()">Guardar</ion-button>
+        <ion-button expand="block" fill="clear" (click)="createModal.dismiss()">Cerrar</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- MODAL EDITAR -->
+  <ion-modal #editModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar><ion-title>Editar usuario</ion-title></ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form">
+          <ion-item><ion-input label="Nombre" labelPlacement="floating" formControlName="name"></ion-input></ion-item>
+          <ion-item><ion-input type="text" label="Activo" labelPlacement="floating"
+              formControlName="activo"></ion-input></ion-item>
+        </form>
+        <ion-button expand="block" [disabled]="form.invalid" (click)="saveEdit()">Actualizar</ion-button>
+        <ion-button expand="block" fill="clear" (click)="editModal.dismiss()">Cerrar</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
