@@ -58,6 +58,20 @@
             </ion-item>
           </ion-menu-toggle>
 
+          <!-- Rendimiento: SOLO admin (visible en móvil y desktop) -->
+          <ion-menu-toggle auto-hide="false" *ngIf="isAdmin">
+            <ion-item routerDirection="root"
+                      [routerLink]="['/operadores']"
+                      lines="none"
+                      detail="false"
+                      routerLinkActive="selected">
+              <ion-icon slot="start"
+                        [ios]="'speedometer-outline'"
+                        [md]="'speedometer-sharp'"></ion-icon>
+              <ion-label>Operadores</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
           <!-- Logout -->
           <ion-item button (click)="logout()" lines="none">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
