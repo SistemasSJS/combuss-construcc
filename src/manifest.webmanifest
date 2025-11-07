@@ -4,6 +4,8 @@
   "description": "Control de carga de combustibles y mantenimientos",
   "start_url": "/index.html",
   "display": "standalone",
+  "background_color": "#121212",   
+  "theme_color": "#121212",  
   "orientation": "portrait",
   "scope": "./",
   "icons": [
